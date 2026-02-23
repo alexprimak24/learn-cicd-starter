@@ -25,7 +25,6 @@ type CreateUserParams struct {
 	CreatedAt string
 	UpdatedAt string
 	Name      string
-	ApiKey    string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
@@ -34,7 +33,6 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) error {
 		arg.CreatedAt,
 		arg.UpdatedAt,
 		arg.Name,
-		arg.ApiKey,
 	)
 	return err
 }
@@ -44,15 +42,14 @@ const getUser = `-- name: GetUser :one
 SELECT id, created_at, updated_at, name, api_key FROM users WHERE api_key = ?
 `
 
-func (q *Queries) GetUser(ctx context.Context, apiKey string) (User, error) {
-	row := q.db.QueryRowContext(ctx, getUser, apiKey)
+func (q *Queries) GetUser(ctx context.Context, userID string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, userID)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
-		&i.ApiKey,
 	)
 	return i, err
 }
