@@ -24,7 +24,7 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	apiKey, err := generateRandomSHA256Hash()
+	userID, err := generateRandomSHA256Hash()
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't gen apikey", err)
 		return
@@ -35,14 +35,13 @@ func (cfg *apiConfig) handlerUsersCreate(w http.ResponseWriter, r *http.Request)
 		CreatedAt: time.Now().UTC().Format(time.RFC3339),
 		UpdatedAt: time.Now().UTC().Format(time.RFC3339),
 		Name:      params.Name,
-		ApiKey:    apiKey,
 	})
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't create user", err)
 		return
 	}
 
-	user, err := cfg.DB.GetUser(r.Context(), apiKey)
+	user, err := cfg.DB.GetUser(r.Context(), userID)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't get user", err)
 		return
