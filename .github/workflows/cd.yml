@@ -33,10 +33,7 @@ jobs:
         run: 'gcloud info'
       
       - name: 'Build & Push to AR'
-        run: 'gcloud builds submit \
-          --tag us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:${{ github.sha }} \
-          --tag us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:latest \
-          .'
+        run: 'gcloud builds submit --tag us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:${{ github.sha }} .'
       
 
 
