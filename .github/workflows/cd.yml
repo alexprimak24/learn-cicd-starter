@@ -9,6 +9,9 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - name: 'Check out code'
         uses: actions/checkout@v4
@@ -18,8 +21,11 @@ jobs:
         with:
           go-version: "1.25.1"
 
-      - name: 'Build the app'
-        run:  ./scripts/buildprod.sh
+      - name: 'Install goose'
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
+      
+      - name: 'Make sure goose installed'
+        run: goose -version
 
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
@@ -34,6 +40,9 @@ jobs:
 
       - name: 'Build & Push to AR'
         run: 'gcloud builds submit --tag us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:${{ github.sha }} .'
+
+      - name: 'Migrate UP'
+        run:  ./scripts/migrateup.sh
 
       - name: 'Deploy to Cloud Run'
         run: gcloud run deploy notely --image us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:${{ github.sha }} --region us-central1 --allow-unauthenticated --project notely-488314 --max-instances=4
