@@ -31,12 +31,9 @@ jobs:
 
       - name: 'Use gcloud CLI'
         run: 'gcloud info'
-        
+
       - name: 'Build & Push to AR'
         run: 'gcloud builds submit --tag us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:${{ github.sha }} .'
-        
-      - name: 'Tag as latest'
-        run: 'gcloud artifacts docker tags add us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:${{ github.sha }} us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:latest'
       
 
 
