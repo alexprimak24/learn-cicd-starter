@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -33,12 +32,12 @@ func main() {
 	}
 
 	port := os.Getenv("PORT")
-	p, err := strconv.Atoi(port)
-	if err != nil || p <= 0 || p > 65535 {
-		log.Fatal("invalid PORT")
+	if port == "" {
+		log.Fatal("PORT environment variable is not set")
 	}
 
 	apiCfg := apiConfig{}
+
 	// https://github.com/libsql/libsql-client-go/#open-a-connection-to-sqld
 	// libsql://[your-database].turso.io?authToken=[your-auth-token]
 	dbURL := os.Getenv("DATABASE_URL")
@@ -91,14 +90,11 @@ func main() {
 
 	router.Mount("/v1", v1Router)
 	srv := &http.Server{
-		Addr:              ":" + strconv.Itoa(p),
+		Addr:              ":" + port,
 		Handler:           router,
-		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       15 * time.Second, // whole request (headers+body)
-		WriteTimeout:      15 * time.Second, // response write
-		IdleTimeout:       60 * time.Second, // keep-alive
+		ReadHeaderTimeout: time.Second * 5,
 	}
 
-	log.Printf("Serving on %s", srv.Addr)
+	log.Printf("Serving on port: %s\n", port)
 	log.Fatal(srv.ListenAndServe())
 }
