@@ -4,6 +4,7 @@ CREATE TABLE users (
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL,
     name TEXT NOT NULL,
+    api_key TEXT UNIQUE NOT NULL
 );
 
 -- +goose Down
