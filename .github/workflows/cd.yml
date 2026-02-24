@@ -10,15 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
+      - name: 'Check out code'
         uses: actions/checkout@v4
 
-      - name: Set up Go
+      - name: 'Set up Go'
         uses: actions/setup-go@v5
         with:
           go-version: "1.25.1"
 
-      - name: Build the app 
+      - name: 'Build the app'
         run:  ./scripts/buildprod.sh
 
       - id: 'auth'
@@ -34,6 +34,9 @@ jobs:
 
       - name: 'Build & Push to AR'
         run: 'gcloud builds submit --tag us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:${{ github.sha }} .'
+
+      - name: 'Deploy to Cloud Run'
+        run: gcloud run deploy notely --image us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:${{ github.sha }} --region us-central1 --allow-unauthenticated --project notely-488314 --max-instances=4
       
 
 
