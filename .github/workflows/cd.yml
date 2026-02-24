@@ -21,12 +21,6 @@ jobs:
         with:
           go-version: "1.25.1"
 
-      - name: 'Install goose'
-        run: go install github.com/pressly/goose/v3/cmd/goose@latest
-      
-      - name: 'Make sure goose installed'
-        run: goose -version
-
       - name: 'Build app'
         run: ./scripts/buildprod.sh
 
@@ -43,6 +37,12 @@ jobs:
 
       - name: 'Build & Push to AR'
         run: 'gcloud builds submit --tag us-central1-docker.pkg.dev/notely-488314/notely-ar-repo/notely:${{ github.sha }} .'
+        
+      - name: 'Install goose'
+        run: go install github.com/pressly/goose/v3/cmd/goose@latest
+      
+      - name: 'Make sure goose installed'
+        run: goose -version
 
       - name: 'Migrate UP'
         run:  ./scripts/migrateup.sh
